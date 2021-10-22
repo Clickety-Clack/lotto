@@ -63,6 +63,7 @@ contract Lottery {
     bool public isLotteryLive;
     uint256 public maxEntriesForPlayer;
     uint256 public ethToParticipate;
+    bool public isWei;
 
     // constructor
     constructor(
@@ -86,7 +87,11 @@ contract Lottery {
     function participate(string playerName) public payable {
         require(bytes(playerName).length > 0);
         require(isLotteryLive);
-        require(msg.value == ethToParticipate * 1 ether);
+        if (isWei) {
+            require(msg.value == ethToParticipate * 1 ether);
+        } else {
+            require(msg.value == ethToParticipate * 1 wei);
+        }
         require(players[msg.sender].entryCount < maxEntriesForPlayer);
 
         if (isNewPlayer(msg.sender)) {
@@ -106,13 +111,14 @@ contract Lottery {
         );
     }
 
-    function activateLottery(uint256 maxEntries, uint256 ethRequired)
+    function activateLottery(uint256 maxEntries, uint256 ethRequired, bool iswei)
         public
         restricted
     {
         isLotteryLive = true;
-        maxEntriesForPlayer = maxEntries == 0 ? 1 : maxEntries;
-        ethToParticipate = ethRequired == 0 ? 1 : ethRequired;
+        maxEntriesForPlayer = maxEntries;
+        ethToParticipate = ethRequired;
+        isWei = iswei;
     }
 
     function declareWinner() public restricted {
