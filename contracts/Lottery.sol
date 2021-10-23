@@ -87,7 +87,7 @@ contract Lottery {
     function participate(string playerName) public payable {
         require(bytes(playerName).length > 0);
         require(isLotteryLive);
-        if (isWei) {
+        if (!isWei) {
             require(msg.value == ethToParticipate * 1 ether);
         } else {
             require(msg.value == ethToParticipate * 1 wei);
