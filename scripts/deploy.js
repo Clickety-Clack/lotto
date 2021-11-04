@@ -29,7 +29,7 @@ async function main() {
       deployer.address
     );
     
-    const Lottery = await ethers.getContractFactory("Lottery");
+    const Lottery = await ethers.getContractFactory("LotteryGenerator");
     LT = await Lottery.deploy();
     console.log("Lottery Contract Address:", LT.address);
 

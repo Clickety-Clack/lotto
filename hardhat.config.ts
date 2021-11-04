@@ -52,7 +52,7 @@ const config: HardhatUserConfig = {
             url: "http://127.0.0.1:7545",
         },
         shft: {
-            url: "http://rpc.shyft.network:64738",
+            url: "https://rpc.shyft.network:64738",
             chainId: 7341,
             gasPrice: 20000000000,
             accounts: [pkey]

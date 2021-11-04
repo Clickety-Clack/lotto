@@ -30,12 +30,15 @@ interface LotteryInterface extends ethers.utils.Interface {
     "manager()": FunctionFragment;
     "addressIndexes(uint256)": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
-    "ethToParticipate()": FunctionFragment;
-    "maxEntriesForPlayer()": FunctionFragment;
+    "endAt()": FunctionFragment;
+    "isWei()": FunctionFragment;
     "getPlayers()": FunctionFragment;
-    "activateLottery(uint256,uint256)": FunctionFragment;
+    "setLotteryStatus(bool)": FunctionFragment;
+    "coinsRequired()": FunctionFragment;
     "getWinningPrice()": FunctionFragment;
     "winner()": FunctionFragment;
+    "creatorFee()": FunctionFragment;
+    "maxEntries()": FunctionFragment;
     "lotteryBag(uint256)": FunctionFragment;
   };
 
@@ -58,27 +61,33 @@ interface LotteryInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "getPlayer", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "ethToParticipate",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "maxEntriesForPlayer",
-    values?: undefined
-  ): string;
+  encodeFunctionData(functionFragment: "endAt", values?: undefined): string;
+  encodeFunctionData(functionFragment: "isWei", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getPlayers",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "activateLottery",
-    values: [BigNumberish, BigNumberish]
+    functionFragment: "setLotteryStatus",
+    values: [boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "coinsRequired",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getWinningPrice",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "winner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "creatorFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "maxEntries",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "lotteryBag",
     values: [BigNumberish]
@@ -106,17 +115,15 @@ interface LotteryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPlayer", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "ethToParticipate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "maxEntriesForPlayer",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "endAt", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "isWei", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getPlayers", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "activateLottery",
+    functionFragment: "setLotteryStatus",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "coinsRequired",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -124,6 +131,8 @@ interface LotteryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "winner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "creatorFee", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "maxEntries", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lotteryBag", data: BytesLike): Result;
 
   events: {
@@ -217,20 +226,20 @@ export class Lottery extends Contract {
       1: BigNumber;
     }>;
 
-    ethToParticipate(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
+    endAt(overrides?: CallOverrides): Promise<{
+      0: string;
     }>;
 
-    "ethToParticipate()"(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
+    "endAt()"(overrides?: CallOverrides): Promise<{
+      0: string;
     }>;
 
-    maxEntriesForPlayer(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
+    isWei(overrides?: CallOverrides): Promise<{
+      0: boolean;
     }>;
 
-    "maxEntriesForPlayer()"(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
+    "isWei()"(overrides?: CallOverrides): Promise<{
+      0: boolean;
     }>;
 
     getPlayers(overrides?: CallOverrides): Promise<{
@@ -241,17 +250,23 @@ export class Lottery extends Contract {
       0: string[];
     }>;
 
-    activateLottery(
-      maxEntries: BigNumberish,
-      ethRequired: BigNumberish,
+    setLotteryStatus(
+      status: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "activateLottery(uint256,uint256)"(
-      maxEntries: BigNumberish,
-      ethRequired: BigNumberish,
+    "setLotteryStatus(bool)"(
+      status: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    coinsRequired(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    "coinsRequired()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     getWinningPrice(overrides?: CallOverrides): Promise<{
       0: BigNumber;
@@ -277,6 +292,22 @@ export class Lottery extends Contract {
       0: string;
       1: BigNumber;
       2: BigNumber;
+    }>;
+
+    creatorFee(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    "creatorFee()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    maxEntries(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    "maxEntries()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
     }>;
 
     lotteryBag(
@@ -346,29 +377,31 @@ export class Lottery extends Contract {
     1: BigNumber;
   }>;
 
-  ethToParticipate(overrides?: CallOverrides): Promise<BigNumber>;
+  endAt(overrides?: CallOverrides): Promise<string>;
 
-  "ethToParticipate()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "endAt()"(overrides?: CallOverrides): Promise<string>;
 
-  maxEntriesForPlayer(overrides?: CallOverrides): Promise<BigNumber>;
+  isWei(overrides?: CallOverrides): Promise<boolean>;
 
-  "maxEntriesForPlayer()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "isWei()"(overrides?: CallOverrides): Promise<boolean>;
 
   getPlayers(overrides?: CallOverrides): Promise<string[]>;
 
   "getPlayers()"(overrides?: CallOverrides): Promise<string[]>;
 
-  activateLottery(
-    maxEntries: BigNumberish,
-    ethRequired: BigNumberish,
+  setLotteryStatus(
+    status: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "activateLottery(uint256,uint256)"(
-    maxEntries: BigNumberish,
-    ethRequired: BigNumberish,
+  "setLotteryStatus(bool)"(
+    status: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  coinsRequired(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "coinsRequired()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   getWinningPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -391,6 +424,14 @@ export class Lottery extends Contract {
     1: BigNumber;
     2: BigNumber;
   }>;
+
+  creatorFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "creatorFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  maxEntries(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "maxEntries()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   lotteryBag(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
@@ -449,29 +490,28 @@ export class Lottery extends Contract {
       1: BigNumber;
     }>;
 
-    ethToParticipate(overrides?: CallOverrides): Promise<BigNumber>;
+    endAt(overrides?: CallOverrides): Promise<string>;
 
-    "ethToParticipate()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "endAt()"(overrides?: CallOverrides): Promise<string>;
 
-    maxEntriesForPlayer(overrides?: CallOverrides): Promise<BigNumber>;
+    isWei(overrides?: CallOverrides): Promise<boolean>;
 
-    "maxEntriesForPlayer()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "isWei()"(overrides?: CallOverrides): Promise<boolean>;
 
     getPlayers(overrides?: CallOverrides): Promise<string[]>;
 
     "getPlayers()"(overrides?: CallOverrides): Promise<string[]>;
 
-    activateLottery(
-      maxEntries: BigNumberish,
-      ethRequired: BigNumberish,
+    setLotteryStatus(status: boolean, overrides?: CallOverrides): Promise<void>;
+
+    "setLotteryStatus(bool)"(
+      status: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "activateLottery(uint256,uint256)"(
-      maxEntries: BigNumberish,
-      ethRequired: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    coinsRequired(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "coinsRequired()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getWinningPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -494,6 +534,14 @@ export class Lottery extends Contract {
       1: BigNumber;
       2: BigNumber;
     }>;
+
+    creatorFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "creatorFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    maxEntries(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "maxEntries()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     lotteryBag(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
@@ -556,29 +604,31 @@ export class Lottery extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    ethToParticipate(overrides?: CallOverrides): Promise<BigNumber>;
+    endAt(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "ethToParticipate()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "endAt()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxEntriesForPlayer(overrides?: CallOverrides): Promise<BigNumber>;
+    isWei(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "maxEntriesForPlayer()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "isWei()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPlayers(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getPlayers()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    activateLottery(
-      maxEntries: BigNumberish,
-      ethRequired: BigNumberish,
+    setLotteryStatus(
+      status: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "activateLottery(uint256,uint256)"(
-      maxEntries: BigNumberish,
-      ethRequired: BigNumberish,
+    "setLotteryStatus(bool)"(
+      status: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    coinsRequired(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "coinsRequired()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getWinningPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -587,6 +637,14 @@ export class Lottery extends Contract {
     winner(overrides?: CallOverrides): Promise<BigNumber>;
 
     "winner()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    creatorFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "creatorFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    maxEntries(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "maxEntries()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     lotteryBag(
       arg0: BigNumberish,
@@ -646,35 +704,31 @@ export class Lottery extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    ethToParticipate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    endAt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "ethToParticipate()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    "endAt()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    maxEntriesForPlayer(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    isWei(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "maxEntriesForPlayer()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    "isWei()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPlayers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "getPlayers()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    activateLottery(
-      maxEntries: BigNumberish,
-      ethRequired: BigNumberish,
+    setLotteryStatus(
+      status: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "activateLottery(uint256,uint256)"(
-      maxEntries: BigNumberish,
-      ethRequired: BigNumberish,
+    "setLotteryStatus(bool)"(
+      status: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    coinsRequired(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "coinsRequired()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getWinningPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -685,6 +739,14 @@ export class Lottery extends Contract {
     winner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "winner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    creatorFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "creatorFee()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    maxEntries(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "maxEntries()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     lotteryBag(
       arg0: BigNumberish,

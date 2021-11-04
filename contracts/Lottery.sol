@@ -5,18 +5,13 @@ contract LotteryGenerator {
     struct lottery {
         uint256 index;
         address manager;
-        string deadline;
-        uint256 fee;
     }
     mapping(address => lottery) lotteryStructs;
-
-    function createLottery(string name, string endAt, uint256 creatorFee) public {
-        require(bytes(name).length > 0);
-        address newLottery = new Lottery(name, msg.sender, endAt, creatorFee);
+    function createLottery(string in_lotteryName, string in_endAt, uint in_creatorFee, uint in_maxEntries, uint256 in_coinsRequired) public {
+        require(bytes(in_lotteryName).length > 0);
+        address newLottery = new Lottery(msg.sender, in_lotteryName, in_endAt, in_creatorFee, in_maxEntries, in_coinsRequired);
         lotteryStructs[newLottery].index = lotteries.push(newLottery) - 1;
         lotteryStructs[newLottery].manager = msg.sender;
-        lotteryStructs[newLottery].deadline = endAt;
-        lotteryStructs[newLottery].fee = creatorFee;
 
         // event
         emit LotteryCreated(newLottery);
@@ -39,14 +34,12 @@ contract LotteryGenerator {
 }
 
 contract Lottery {
-    // name of the lottery
-    string public lotteryName;
-    // Creator of the lottery contract
     address public manager;
-    // How long til winner is picked
-    string public deadline;
-    // How much % of winning goes back to creator
-    uint256 public fee;
+    string public lotteryName;
+    string public endAt;
+    uint public creatorFee;
+    uint public maxEntries;
+    uint256 public coinsRequired;
 
     // variables for players
     struct Player {
@@ -61,21 +54,23 @@ contract Lottery {
     // Variables for lottery information
     Player public winner;
     bool public isLotteryLive;
-    uint256 public maxEntriesForPlayer;
-    uint256 public ethToParticipate;
     bool public isWei;
 
     // constructor
     constructor(
-        string name,
-        address creator,
-        string endAt,
-        uint creatorFee
+        address in_manager,
+        string in_lotteryName,
+        string in_endAt,
+        uint in_creatorFee,
+        uint in_maxEntries,
+        uint256 in_coinsRequired
     ) public {
-        manager = creator;
-        lotteryName = name;
-        deadline = endAt;
-        fee = creatorFee;
+        manager = in_manager;
+        lotteryName = in_lotteryName;
+        endAt = in_endAt;
+        creatorFee = in_creatorFee;
+        maxEntries = in_maxEntries;
+        coinsRequired = in_coinsRequired;
     }
 
     // Let users participate by sending eth directly to contract address
@@ -88,11 +83,11 @@ contract Lottery {
         require(bytes(playerName).length > 0);
         require(isLotteryLive);
         if (!isWei) {
-            require(msg.value == ethToParticipate * 1 ether);
+            require(msg.value == coinsRequired * 1 ether);
         } else {
-            require(msg.value == ethToParticipate * 1 wei);
+            require(msg.value == coinsRequired * 1 wei);
         }
-        require(players[msg.sender].entryCount < maxEntriesForPlayer);
+        require(players[msg.sender].entryCount < maxEntries);
 
         if (isNewPlayer(msg.sender)) {
             players[msg.sender].entryCount = 1;
@@ -111,22 +106,25 @@ contract Lottery {
         );
     }
 
-    function activateLottery(uint256 maxEntries, uint256 ethRequired, bool iswei)
-        public
-        restricted
-    {
-        isLotteryLive = true;
-        maxEntriesForPlayer = maxEntries;
-        ethToParticipate = ethRequired;
-        isWei = iswei;
+    // function activateLottery(uint256 maxEntries, uint256 ethRequired, bool iswei)
+    //     public
+    //     restricted
+    // {
+    //     isLotteryLive = true;
+    //     maxEntriesForPlayer = maxEntries;
+    //     ethToParticipate = ethRequired;
+    //     isWei = iswei;
+    // }
+    function setLotteryStatus(bool status) public {
+        isLotteryLive = status;
     }
 
     function declareWinner() public restricted {
         require(lotteryBag.length > 0);
 
         uint256 index = generateRandomNumber() % lotteryBag.length;
-        lotteryBag[index].transfer(address(this).balance * (100 - fee) / 100);
-        manager.transfer(address(this).balance * fee / 100);
+        lotteryBag[index].transfer(address(this).balance * (100 - creatorFee) / 100);
+        manager.transfer(address(this).balance * creatorFee / 100);
 
         winner.name = players[lotteryBag[index]].name;
         winner.entryCount = players[lotteryBag[index]].entryCount;
