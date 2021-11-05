@@ -31,7 +31,6 @@ interface LotteryInterface extends ethers.utils.Interface {
     "addressIndexes(uint256)": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
     "endAt()": FunctionFragment;
-    "isWei()": FunctionFragment;
     "getPlayers()": FunctionFragment;
     "setLotteryStatus(bool)": FunctionFragment;
     "coinsRequired()": FunctionFragment;
@@ -62,7 +61,6 @@ interface LotteryInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "getPlayer", values: [string]): string;
   encodeFunctionData(functionFragment: "endAt", values?: undefined): string;
-  encodeFunctionData(functionFragment: "isWei", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getPlayers",
     values?: undefined
@@ -116,7 +114,6 @@ interface LotteryInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getPlayer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "endAt", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "isWei", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getPlayers", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setLotteryStatus",
@@ -232,14 +229,6 @@ export class Lottery extends Contract {
 
     "endAt()"(overrides?: CallOverrides): Promise<{
       0: string;
-    }>;
-
-    isWei(overrides?: CallOverrides): Promise<{
-      0: boolean;
-    }>;
-
-    "isWei()"(overrides?: CallOverrides): Promise<{
-      0: boolean;
     }>;
 
     getPlayers(overrides?: CallOverrides): Promise<{
@@ -381,10 +370,6 @@ export class Lottery extends Contract {
 
   "endAt()"(overrides?: CallOverrides): Promise<string>;
 
-  isWei(overrides?: CallOverrides): Promise<boolean>;
-
-  "isWei()"(overrides?: CallOverrides): Promise<boolean>;
-
   getPlayers(overrides?: CallOverrides): Promise<string[]>;
 
   "getPlayers()"(overrides?: CallOverrides): Promise<string[]>;
@@ -493,10 +478,6 @@ export class Lottery extends Contract {
     endAt(overrides?: CallOverrides): Promise<string>;
 
     "endAt()"(overrides?: CallOverrides): Promise<string>;
-
-    isWei(overrides?: CallOverrides): Promise<boolean>;
-
-    "isWei()"(overrides?: CallOverrides): Promise<boolean>;
 
     getPlayers(overrides?: CallOverrides): Promise<string[]>;
 
@@ -608,10 +589,6 @@ export class Lottery extends Contract {
 
     "endAt()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    isWei(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "isWei()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getPlayers(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getPlayers()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -707,10 +684,6 @@ export class Lottery extends Contract {
     endAt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "endAt()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    isWei(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "isWei()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPlayers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

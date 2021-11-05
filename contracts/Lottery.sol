@@ -9,6 +9,7 @@ contract LotteryGenerator {
     mapping(address => lottery) lotteryStructs;
     function createLottery(string in_lotteryName, string in_endAt, uint in_creatorFee, uint in_maxEntries, uint256 in_coinsRequired) public {
         require(bytes(in_lotteryName).length > 0);
+        require(bytes(in_endAt).length > 0);
         address newLottery = new Lottery(msg.sender, in_lotteryName, in_endAt, in_creatorFee, in_maxEntries, in_coinsRequired);
         lotteryStructs[newLottery].index = lotteries.push(newLottery) - 1;
         lotteryStructs[newLottery].manager = msg.sender;
@@ -54,7 +55,6 @@ contract Lottery {
     // Variables for lottery information
     Player public winner;
     bool public isLotteryLive;
-    bool public isWei;
 
     // constructor
     constructor(
@@ -71,6 +71,7 @@ contract Lottery {
         creatorFee = in_creatorFee;
         maxEntries = in_maxEntries;
         coinsRequired = in_coinsRequired;
+        isLotteryLive = true;
     }
 
     // Let users participate by sending eth directly to contract address
@@ -82,11 +83,7 @@ contract Lottery {
     function participate(string playerName) public payable {
         require(bytes(playerName).length > 0);
         require(isLotteryLive);
-        if (!isWei) {
-            require(msg.value == coinsRequired * 1 ether);
-        } else {
-            require(msg.value == coinsRequired * 1 wei);
-        }
+        require(msg.value == coinsRequired * 10**18);
         require(players[msg.sender].entryCount < maxEntries);
 
         if (isNewPlayer(msg.sender)) {
@@ -106,16 +103,7 @@ contract Lottery {
         );
     }
 
-    // function activateLottery(uint256 maxEntries, uint256 ethRequired, bool iswei)
-    //     public
-    //     restricted
-    // {
-    //     isLotteryLive = true;
-    //     maxEntriesForPlayer = maxEntries;
-    //     ethToParticipate = ethRequired;
-    //     isWei = iswei;
-    // }
-    function setLotteryStatus(bool status) public {
+    function setLotteryStatus(bool status) public restricted {
         isLotteryLive = status;
     }
 
