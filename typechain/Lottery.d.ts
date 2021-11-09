@@ -37,7 +37,6 @@ interface LotteryInterface extends ethers.utils.Interface {
     "getWinningPrice()": FunctionFragment;
     "winner()": FunctionFragment;
     "creatorFee()": FunctionFragment;
-    "maxEntries()": FunctionFragment;
     "lotteryBag(uint256)": FunctionFragment;
   };
 
@@ -83,10 +82,6 @@ interface LotteryInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "maxEntries",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "lotteryBag",
     values: [BigNumberish]
   ): string;
@@ -129,7 +124,6 @@ interface LotteryInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "winner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "creatorFee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "maxEntries", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lotteryBag", data: BytesLike): Result;
 
   events: {
@@ -291,14 +285,6 @@ export class Lottery extends Contract {
       0: BigNumber;
     }>;
 
-    maxEntries(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
-    }>;
-
-    "maxEntries()"(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
-    }>;
-
     lotteryBag(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -414,10 +400,6 @@ export class Lottery extends Contract {
 
   "creatorFee()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  maxEntries(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "maxEntries()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   lotteryBag(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   "lotteryBag(uint256)"(
@@ -520,10 +502,6 @@ export class Lottery extends Contract {
 
     "creatorFee()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxEntries(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "maxEntries()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     lotteryBag(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     "lotteryBag(uint256)"(
@@ -619,10 +597,6 @@ export class Lottery extends Contract {
 
     "creatorFee()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxEntries(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "maxEntries()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     lotteryBag(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -716,10 +690,6 @@ export class Lottery extends Contract {
     creatorFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "creatorFee()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    maxEntries(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "maxEntries()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     lotteryBag(
       arg0: BigNumberish,

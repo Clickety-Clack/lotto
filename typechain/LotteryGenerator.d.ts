@@ -23,7 +23,7 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface LotteryGeneratorInterface extends ethers.utils.Interface {
   functions: {
     "lotteries(uint256)": FunctionFragment;
-    "createLottery(string,string,uint256,uint256,uint256)": FunctionFragment;
+    "createLottery(string,string,uint256,uint256)": FunctionFragment;
     "deleteLottery(address)": FunctionFragment;
     "getLotteries()": FunctionFragment;
   };
@@ -34,7 +34,7 @@ interface LotteryGeneratorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "createLottery",
-    values: [string, string, BigNumberish, BigNumberish, BigNumberish]
+    values: [string, string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "deleteLottery",
@@ -98,16 +98,14 @@ export class LotteryGenerator extends Contract {
       in_lotteryName: string,
       in_endAt: string,
       in_creatorFee: BigNumberish,
-      in_maxEntries: BigNumberish,
       in_coinsRequired: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "createLottery(string,string,uint256,uint256,uint256)"(
+    "createLottery(string,string,uint256,uint256)"(
       in_lotteryName: string,
       in_endAt: string,
       in_creatorFee: BigNumberish,
-      in_maxEntries: BigNumberish,
       in_coinsRequired: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -142,16 +140,14 @@ export class LotteryGenerator extends Contract {
     in_lotteryName: string,
     in_endAt: string,
     in_creatorFee: BigNumberish,
-    in_maxEntries: BigNumberish,
     in_coinsRequired: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "createLottery(string,string,uint256,uint256,uint256)"(
+  "createLottery(string,string,uint256,uint256)"(
     in_lotteryName: string,
     in_endAt: string,
     in_creatorFee: BigNumberish,
-    in_maxEntries: BigNumberish,
     in_coinsRequired: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -182,16 +178,14 @@ export class LotteryGenerator extends Contract {
       in_lotteryName: string,
       in_endAt: string,
       in_creatorFee: BigNumberish,
-      in_maxEntries: BigNumberish,
       in_coinsRequired: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "createLottery(string,string,uint256,uint256,uint256)"(
+    "createLottery(string,string,uint256,uint256)"(
       in_lotteryName: string,
       in_endAt: string,
       in_creatorFee: BigNumberish,
-      in_maxEntries: BigNumberish,
       in_coinsRequired: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -230,16 +224,14 @@ export class LotteryGenerator extends Contract {
       in_lotteryName: string,
       in_endAt: string,
       in_creatorFee: BigNumberish,
-      in_maxEntries: BigNumberish,
       in_coinsRequired: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "createLottery(string,string,uint256,uint256,uint256)"(
+    "createLottery(string,string,uint256,uint256)"(
       in_lotteryName: string,
       in_endAt: string,
       in_creatorFee: BigNumberish,
-      in_maxEntries: BigNumberish,
       in_coinsRequired: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -274,16 +266,14 @@ export class LotteryGenerator extends Contract {
       in_lotteryName: string,
       in_endAt: string,
       in_creatorFee: BigNumberish,
-      in_maxEntries: BigNumberish,
       in_coinsRequired: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "createLottery(string,string,uint256,uint256,uint256)"(
+    "createLottery(string,string,uint256,uint256)"(
       in_lotteryName: string,
       in_endAt: string,
       in_creatorFee: BigNumberish,
-      in_maxEntries: BigNumberish,
       in_coinsRequired: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
