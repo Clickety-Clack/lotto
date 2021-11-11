@@ -7,10 +7,11 @@ contract LotteryGenerator {
         address manager;
     }
     mapping(address => lottery) lotteryStructs;
-    function createLottery(string in_lotteryName, string in_endAt, uint in_creatorFee, uint256 in_coinsRequired) public {
+    function createLottery(string in_lotteryName, string in_createdAt, string in_endAt, uint in_creatorFee, uint256 in_coinsRequired) public {
         require(bytes(in_lotteryName).length > 0);
+        require(bytes(in_createdAt).length > 0);
         require(bytes(in_endAt).length > 0);
-        address newLottery = new Lottery(msg.sender, in_lotteryName, in_endAt, in_creatorFee, in_coinsRequired);
+        address newLottery = new Lottery(msg.sender, in_lotteryName, in_createdAt, in_endAt, in_creatorFee, in_coinsRequired);
         lotteryStructs[newLottery].index = lotteries.push(newLottery) - 1;
         lotteryStructs[newLottery].manager = msg.sender;
 
@@ -37,6 +38,7 @@ contract LotteryGenerator {
 contract Lottery {
     address public manager;
     string public lotteryName;
+    string public createdAt;
     string public endAt;
     uint public creatorFee;
     uint256 public coinsRequired;
@@ -59,12 +61,14 @@ contract Lottery {
     constructor(
         address in_manager,
         string in_lotteryName,
+        string in_createdAt,
         string in_endAt,
         uint in_creatorFee,
         uint256 in_coinsRequired
     ) public {
         manager = in_manager;
         lotteryName = in_lotteryName;
+        createdAt = in_createdAt;
         endAt = in_endAt;
         creatorFee = in_creatorFee;
         coinsRequired = in_coinsRequired;
@@ -80,7 +84,7 @@ contract Lottery {
     function participate(string playerName) public payable {
         require(bytes(playerName).length > 0);
         require(isLotteryLive);
-        require(msg.value == coinsRequired * 10**18);
+        // require(msg.value == coinsRequired * 10**18);
 
         if (isNewPlayer(msg.sender)) {
             players[msg.sender].entryCount = 1;

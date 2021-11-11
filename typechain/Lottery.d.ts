@@ -33,6 +33,7 @@ interface LotteryInterface extends ethers.utils.Interface {
     "endAt()": FunctionFragment;
     "getPlayers()": FunctionFragment;
     "setLotteryStatus(bool)": FunctionFragment;
+    "createdAt()": FunctionFragment;
     "coinsRequired()": FunctionFragment;
     "getWinningPrice()": FunctionFragment;
     "winner()": FunctionFragment;
@@ -68,6 +69,7 @@ interface LotteryInterface extends ethers.utils.Interface {
     functionFragment: "setLotteryStatus",
     values: [boolean]
   ): string;
+  encodeFunctionData(functionFragment: "createdAt", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "coinsRequired",
     values?: undefined
@@ -114,6 +116,7 @@ interface LotteryInterface extends ethers.utils.Interface {
     functionFragment: "setLotteryStatus",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "createdAt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "coinsRequired",
     data: BytesLike
@@ -243,6 +246,14 @@ export class Lottery extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    createdAt(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    "createdAt()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
     coinsRequired(overrides?: CallOverrides): Promise<{
       0: BigNumber;
     }>;
@@ -370,6 +381,10 @@ export class Lottery extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  createdAt(overrides?: CallOverrides): Promise<string>;
+
+  "createdAt()"(overrides?: CallOverrides): Promise<string>;
+
   coinsRequired(overrides?: CallOverrides): Promise<BigNumber>;
 
   "coinsRequired()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -471,6 +486,10 @@ export class Lottery extends Contract {
       status: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    createdAt(overrides?: CallOverrides): Promise<string>;
+
+    "createdAt()"(overrides?: CallOverrides): Promise<string>;
 
     coinsRequired(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -581,6 +600,10 @@ export class Lottery extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    createdAt(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "createdAt()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     coinsRequired(overrides?: CallOverrides): Promise<BigNumber>;
 
     "coinsRequired()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -672,6 +695,10 @@ export class Lottery extends Contract {
       status: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    createdAt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "createdAt()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     coinsRequired(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
