@@ -42,11 +42,12 @@ contract Lottery {
     string public endAt;
     uint public creatorFee;
     uint256 public coinsRequired;
+    uint public potSize;
 
     // variables for players
     struct Player {
         string name;
-        uint256 entryCount;
+        uint256 ticketCount;
         uint256 index;
     }
     address[] public addressIndexes;
@@ -73,25 +74,27 @@ contract Lottery {
         creatorFee = in_creatorFee;
         coinsRequired = in_coinsRequired;
         isLotteryLive = true;
+        potSize = 0;
     }
 
     // Let users participate by sending eth directly to contract address
     function() public payable {
         // player name will be unknown
-        participate("Unknown");
+        participate("Unknown", 0);
     }
 
-    function participate(string playerName) public payable {
+    function participate(string playerName, uint256 tickets) public payable {
         require(bytes(playerName).length > 0);
         require(isLotteryLive);
         // require(msg.value == coinsRequired * 10**18);
+        potSize += tickets;
 
         if (isNewPlayer(msg.sender)) {
-            players[msg.sender].entryCount = 1;
+            players[msg.sender].ticketCount = tickets;
             players[msg.sender].name = playerName;
             players[msg.sender].index = addressIndexes.push(msg.sender) - 1;
         } else {
-            players[msg.sender].entryCount += 1;
+            players[msg.sender].ticketCount += tickets;
         }
 
         lotteryBag.push(msg.sender);
@@ -99,7 +102,7 @@ contract Lottery {
         // event
         emit PlayerParticipated(
             players[msg.sender].name,
-            players[msg.sender].entryCount
+            players[msg.sender].ticketCount
         );
     }
 
@@ -115,17 +118,16 @@ contract Lottery {
         manager.transfer(address(this).balance * creatorFee / 100);
 
         winner.name = players[lotteryBag[index]].name;
-        winner.entryCount = players[lotteryBag[index]].entryCount;
 
         // empty the lottery bag and indexAddresses
-        lotteryBag = new address[](0);
-        addressIndexes = new address[](0);
+        // lotteryBag = new address[](0);
+        // addressIndexes = new address[](0);
 
         // Mark the lottery inactive
         isLotteryLive = false;
 
         // event
-        emit WinnerDeclared(winner.name, winner.entryCount);
+        emit WinnerDeclared(winner.name);
     }
 
     function getPlayers() public view returns (address[]) {
@@ -140,7 +142,7 @@ contract Lottery {
         if (isNewPlayer(playerAddress)) {
             return ("", 0);
         }
-        return (players[playerAddress].name, players[playerAddress].entryCount);
+        return (players[playerAddress].name, players[playerAddress].ticketCount);
     }
 
     function getWinningPrice() public view returns (uint256) {
@@ -167,6 +169,6 @@ contract Lottery {
     }
 
     // Events
-    event WinnerDeclared(string name, uint256 entryCount);
-    event PlayerParticipated(string name, uint256 entryCount);
+    event WinnerDeclared(string name);
+    event PlayerParticipated(string name, uint256 ticketCount);
 }

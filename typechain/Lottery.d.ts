@@ -25,11 +25,11 @@ interface LotteryInterface extends ethers.utils.Interface {
   functions: {
     "isLotteryLive()": FunctionFragment;
     "declareWinner()": FunctionFragment;
-    "participate(string)": FunctionFragment;
     "lotteryName()": FunctionFragment;
     "manager()": FunctionFragment;
     "addressIndexes(uint256)": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
+    "potSize()": FunctionFragment;
     "endAt()": FunctionFragment;
     "getPlayers()": FunctionFragment;
     "setLotteryStatus(bool)": FunctionFragment;
@@ -38,6 +38,7 @@ interface LotteryInterface extends ethers.utils.Interface {
     "getWinningPrice()": FunctionFragment;
     "winner()": FunctionFragment;
     "creatorFee()": FunctionFragment;
+    "participate(string,uint256)": FunctionFragment;
     "lotteryBag(uint256)": FunctionFragment;
   };
 
@@ -49,7 +50,6 @@ interface LotteryInterface extends ethers.utils.Interface {
     functionFragment: "declareWinner",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "participate", values: [string]): string;
   encodeFunctionData(
     functionFragment: "lotteryName",
     values?: undefined
@@ -60,6 +60,7 @@ interface LotteryInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "getPlayer", values: [string]): string;
+  encodeFunctionData(functionFragment: "potSize", values?: undefined): string;
   encodeFunctionData(functionFragment: "endAt", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getPlayers",
@@ -84,6 +85,10 @@ interface LotteryInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "participate",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "lotteryBag",
     values: [BigNumberish]
   ): string;
@@ -97,10 +102,6 @@ interface LotteryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "participate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "lotteryName",
     data: BytesLike
   ): Result;
@@ -110,6 +111,7 @@ interface LotteryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPlayer", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "potSize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "endAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getPlayers", data: BytesLike): Result;
   decodeFunctionResult(
@@ -127,10 +129,14 @@ interface LotteryInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "winner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "creatorFee", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "participate",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "lotteryBag", data: BytesLike): Result;
 
   events: {
-    "WinnerDeclared(string,uint256)": EventFragment;
+    "WinnerDeclared(string)": EventFragment;
     "PlayerParticipated(string,uint256)": EventFragment;
   };
 
@@ -163,16 +169,6 @@ export class Lottery extends Contract {
     declareWinner(overrides?: Overrides): Promise<ContractTransaction>;
 
     "declareWinner()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-    participate(
-      playerName: string,
-      overrides?: PayableOverrides
-    ): Promise<ContractTransaction>;
-
-    "participate(string)"(
-      playerName: string,
-      overrides?: PayableOverrides
-    ): Promise<ContractTransaction>;
 
     lotteryName(overrides?: CallOverrides): Promise<{
       0: string;
@@ -218,6 +214,14 @@ export class Lottery extends Contract {
     ): Promise<{
       0: string;
       1: BigNumber;
+    }>;
+
+    potSize(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    "potSize()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
     }>;
 
     endAt(overrides?: CallOverrides): Promise<{
@@ -272,7 +276,7 @@ export class Lottery extends Contract {
 
     winner(overrides?: CallOverrides): Promise<{
       name: string;
-      entryCount: BigNumber;
+      ticketCount: BigNumber;
       index: BigNumber;
       0: string;
       1: BigNumber;
@@ -281,7 +285,7 @@ export class Lottery extends Contract {
 
     "winner()"(overrides?: CallOverrides): Promise<{
       name: string;
-      entryCount: BigNumber;
+      ticketCount: BigNumber;
       index: BigNumber;
       0: string;
       1: BigNumber;
@@ -295,6 +299,18 @@ export class Lottery extends Contract {
     "creatorFee()"(overrides?: CallOverrides): Promise<{
       0: BigNumber;
     }>;
+
+    participate(
+      playerName: string,
+      tickets: BigNumberish,
+      overrides?: PayableOverrides
+    ): Promise<ContractTransaction>;
+
+    "participate(string,uint256)"(
+      playerName: string,
+      tickets: BigNumberish,
+      overrides?: PayableOverrides
+    ): Promise<ContractTransaction>;
 
     lotteryBag(
       arg0: BigNumberish,
@@ -318,16 +334,6 @@ export class Lottery extends Contract {
   declareWinner(overrides?: Overrides): Promise<ContractTransaction>;
 
   "declareWinner()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-  participate(
-    playerName: string,
-    overrides?: PayableOverrides
-  ): Promise<ContractTransaction>;
-
-  "participate(string)"(
-    playerName: string,
-    overrides?: PayableOverrides
-  ): Promise<ContractTransaction>;
 
   lotteryName(overrides?: CallOverrides): Promise<string>;
 
@@ -363,6 +369,10 @@ export class Lottery extends Contract {
     1: BigNumber;
   }>;
 
+  potSize(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "potSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
   endAt(overrides?: CallOverrides): Promise<string>;
 
   "endAt()"(overrides?: CallOverrides): Promise<string>;
@@ -395,7 +405,7 @@ export class Lottery extends Contract {
 
   winner(overrides?: CallOverrides): Promise<{
     name: string;
-    entryCount: BigNumber;
+    ticketCount: BigNumber;
     index: BigNumber;
     0: string;
     1: BigNumber;
@@ -404,7 +414,7 @@ export class Lottery extends Contract {
 
   "winner()"(overrides?: CallOverrides): Promise<{
     name: string;
-    entryCount: BigNumber;
+    ticketCount: BigNumber;
     index: BigNumber;
     0: string;
     1: BigNumber;
@@ -414,6 +424,18 @@ export class Lottery extends Contract {
   creatorFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   "creatorFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  participate(
+    playerName: string,
+    tickets: BigNumberish,
+    overrides?: PayableOverrides
+  ): Promise<ContractTransaction>;
+
+  "participate(string,uint256)"(
+    playerName: string,
+    tickets: BigNumberish,
+    overrides?: PayableOverrides
+  ): Promise<ContractTransaction>;
 
   lotteryBag(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
@@ -430,13 +452,6 @@ export class Lottery extends Contract {
     declareWinner(overrides?: CallOverrides): Promise<void>;
 
     "declareWinner()"(overrides?: CallOverrides): Promise<void>;
-
-    participate(playerName: string, overrides?: CallOverrides): Promise<void>;
-
-    "participate(string)"(
-      playerName: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     lotteryName(overrides?: CallOverrides): Promise<string>;
 
@@ -472,6 +487,10 @@ export class Lottery extends Contract {
       1: BigNumber;
     }>;
 
+    potSize(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "potSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     endAt(overrides?: CallOverrides): Promise<string>;
 
     "endAt()"(overrides?: CallOverrides): Promise<string>;
@@ -501,7 +520,7 @@ export class Lottery extends Contract {
 
     winner(overrides?: CallOverrides): Promise<{
       name: string;
-      entryCount: BigNumber;
+      ticketCount: BigNumber;
       index: BigNumber;
       0: string;
       1: BigNumber;
@@ -510,7 +529,7 @@ export class Lottery extends Contract {
 
     "winner()"(overrides?: CallOverrides): Promise<{
       name: string;
-      entryCount: BigNumber;
+      ticketCount: BigNumber;
       index: BigNumber;
       0: string;
       1: BigNumber;
@@ -521,6 +540,18 @@ export class Lottery extends Contract {
 
     "creatorFee()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    participate(
+      playerName: string,
+      tickets: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "participate(string,uint256)"(
+      playerName: string,
+      tickets: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     lotteryBag(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     "lotteryBag(uint256)"(
@@ -530,9 +561,9 @@ export class Lottery extends Contract {
   };
 
   filters: {
-    WinnerDeclared(name: null, entryCount: null): EventFilter;
+    WinnerDeclared(name: null): EventFilter;
 
-    PlayerParticipated(name: null, entryCount: null): EventFilter;
+    PlayerParticipated(name: null, ticketCount: null): EventFilter;
   };
 
   estimateGas: {
@@ -543,16 +574,6 @@ export class Lottery extends Contract {
     declareWinner(overrides?: Overrides): Promise<BigNumber>;
 
     "declareWinner()"(overrides?: Overrides): Promise<BigNumber>;
-
-    participate(
-      playerName: string,
-      overrides?: PayableOverrides
-    ): Promise<BigNumber>;
-
-    "participate(string)"(
-      playerName: string,
-      overrides?: PayableOverrides
-    ): Promise<BigNumber>;
 
     lotteryName(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -581,6 +602,10 @@ export class Lottery extends Contract {
       playerAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    potSize(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "potSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     endAt(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -620,6 +645,18 @@ export class Lottery extends Contract {
 
     "creatorFee()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    participate(
+      playerName: string,
+      tickets: BigNumberish,
+      overrides?: PayableOverrides
+    ): Promise<BigNumber>;
+
+    "participate(string,uint256)"(
+      playerName: string,
+      tickets: BigNumberish,
+      overrides?: PayableOverrides
+    ): Promise<BigNumber>;
+
     lotteryBag(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -639,16 +676,6 @@ export class Lottery extends Contract {
     declareWinner(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "declareWinner()"(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    participate(
-      playerName: string,
-      overrides?: PayableOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "participate(string)"(
-      playerName: string,
-      overrides?: PayableOverrides
-    ): Promise<PopulatedTransaction>;
 
     lotteryName(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -677,6 +704,10 @@ export class Lottery extends Contract {
       playerAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    potSize(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "potSize()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     endAt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -717,6 +748,18 @@ export class Lottery extends Contract {
     creatorFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "creatorFee()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    participate(
+      playerName: string,
+      tickets: BigNumberish,
+      overrides?: PayableOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "participate(string,uint256)"(
+      playerName: string,
+      tickets: BigNumberish,
+      overrides?: PayableOverrides
+    ): Promise<PopulatedTransaction>;
 
     lotteryBag(
       arg0: BigNumberish,
